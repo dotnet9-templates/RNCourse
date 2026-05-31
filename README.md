@@ -21,9 +21,17 @@ You have several options to preview the app on Mac:
 
 ### Option 2: Android Emulator
 
-- Install **Android Studio** from [developer.android.com/studio](https://developer.android.com/studio)
-- Create a virtual device inside Android Studio (AVD Manager)
-- Run `npx expo start` then press `a` in the terminal
+1. Download **Android Studio Panda 4** from [developer.android.com/studio](https://developer.android.com/studio) — pick the **Apple chip** version on a Mac with M-series chip
+2. Open the `.dmg`, drag Android Studio to Applications, and launch it
+3. Complete the setup wizard — accept all license agreements for each item listed
+4. Once open, click **More Actions → Virtual Device Manager**
+5. Click **Create virtual device...**
+6. Select **Pixel 9 Pro** → Next
+7. Select system image **API 37** (download it if needed, ~2.2GB) → Next → Finish
+8. Click the **play ▶ button** to boot the emulator — wait for the Android home screen to appear
+9. Back in your terminal, run `npx expo start` then press `a`
+
+> You do **not** need to open your project in Android Studio. It's only used to run the emulator.
 
 ### Option 3: Physical iPhone with Expo Go
 
@@ -56,6 +64,21 @@ Once Xcode is installed:
 Expo handles everything automatically — you do not need to open Xcode or the Simulator app manually. The first boot takes ~30 seconds; after that it's much faster.
 
 Once the app is running in the simulator, press **Cmd + D** to open the Expo developer menu (reload, toggle inspector, etc.).
+
+### Simulators used in this project
+
+| Platform | Device |
+|---|---|
+| iOS Simulator | iPhone 16 Pro (iOS 18.6) |
+| Android Emulator | Pixel 9 Pro (API 37 / Android 17) |
+
+### Developer menu shortcuts
+
+| Platform | Open developer menu |
+|---|---|
+| iOS Simulator | **Cmd + D** |
+| Android Emulator | **Cmd + M** (Mac) or **Ctrl + M** (Windows/Linux) |
+| Physical device | Shake the phone |
 
 ### iOS vs. Android — will it work the same?
 
