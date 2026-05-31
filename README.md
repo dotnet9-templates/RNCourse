@@ -2,8 +2,6 @@
 
 Follow-along project for Udemy's [React Native - The Practical Guide](https://www.udemy.com/course/react-native-the-practical-guide/) by Maximilian Schwarzmüller.
 
-Instructor's source code: https://github.com/academind/react-native-practical-guide-code
-
 ---
 
 ## Setup
@@ -13,14 +11,14 @@ Instructor's source code: https://github.com/academind/react-native-practical-gu
 - **Start the app:** `cd RNCourse && npx expo start`
 - **If Metro is stale:** `npx expo start --clear`
 
-| Shortcut | Action |
-|---|---|
-| `i` | Open iOS Simulator |
-| `a` | Open Android Emulator (must be running first) |
-| `s` | Switch between Expo Go / dev client |
-| `r` | Reload |
-| Cmd+D | Developer menu (iOS) |
-| Cmd+M | Developer menu (Android) |
+| Shortcut | Action                                        |
+| -------- | --------------------------------------------- |
+| `i`      | Open iOS Simulator                            |
+| `a`      | Open Android Emulator (must be running first) |
+| `s`      | Switch between Expo Go / dev client           |
+| `r`      | Reload                                        |
+| Cmd+D    | Developer menu (iOS)                          |
+| Cmd+M    | Developer menu (Android)                      |
 
 ---
 
@@ -69,6 +67,56 @@ if (!fontsLoaded) return null;
 
 ---
 
+## Section 5 — Adaptive UIs (built on top of Section 4)
+
+**Topics:** Responsive layouts · Platform-specific code · `useWindowDimensions` · `KeyboardAvoidingView` · `ScrollView` · Platform file extensions (`.ios.js` / `.android.js`)
+
+**No new packages needed** — builds directly on the Section 4 project.
+
+### Key concepts introduced
+
+**`useWindowDimensions`** — dynamically reads the screen size so layouts adapt to orientation changes and different devices:
+
+```js
+const { width, height } = useWindowDimensions();
+const marginTopDistance = height < 380 ? 30 : 100; // compact layout in landscape
+```
+
+**`KeyboardAvoidingView` + `ScrollView`** — prevents the keyboard from covering the input on the start screen:
+
+```js
+<ScrollView style={styles.screen}>
+  <KeyboardAvoidingView style={styles.screen} behavior="position">
+    ...
+  </KeyboardAvoidingView>
+</ScrollView>
+```
+
+**Platform-specific file extensions** — React Native auto-picks the right file based on platform. No `if/else` needed:
+
+```
+components/ui/Title.ios.js      → loaded on iPhone
+components/ui/Title.android.js  → loaded on Android
+constants/colors.ios.js
+constants/colors.android.js
+```
+
+**Landscape layout swap in `GameScreen`** — when width > 500 (landscape), the buttons move beside the number instead of above/below it:
+
+```js
+if (width > 500) {
+  content = ( /* horizontal layout */ );
+}
+```
+
+### Instructor vs. SDK 51 fixes
+
+Same `expo-app-loading` fix as Section 4 applies here — the instructor's `App.js` still uses it. Use the `expo-splash-screen` replacement documented in Section 4 above.
+
+The platform file extensions (`.ios.js`, `.android.js`) work identically on SDK 51 — no changes needed.
+
+---
+
 ## Known API Differences
 
 ### expo-image-picker
@@ -85,8 +133,8 @@ const uri = image.assets[0].uri;
 
 ```js
 // SDK 51 — synchronous API, no promise chains needed
-const places = database.getAllSync('SELECT * FROM places');
-const place = database.getFirstSync('SELECT * FROM places WHERE id = ?', [id]);
+const places = database.getAllSync("SELECT * FROM places");
+const place = database.getFirstSync("SELECT * FROM places WHERE id = ?", [id]);
 ```
 
 ### Maps

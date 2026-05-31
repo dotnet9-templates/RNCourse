@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
-import { View, StyleSheet, Alert, Text, FlatList } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Alert,
+  FlatList,
+  useWindowDimensions, // used to switch between portrait and landscape layouts
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import NumberContainer from '../components/game/NumberContainer';
@@ -27,6 +33,9 @@ function GameScreen({ userNumber, onGameOver }) {
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
   const [guessRounds, setGuessRounds] = useState([initialGuess]);
 
+  // width updates when device rotates — drives the portrait vs landscape layout switch
+  const { width, height } = useWindowDimensions();
+
   useEffect(() => {
     if (currentGuess === userNumber) {
       onGameOver(guessRounds.length);
@@ -39,13 +48,12 @@ function GameScreen({ userNumber, onGameOver }) {
   }, []);
 
   function nextGuessHandler(direction) {
-    // direction => 'lower', 'greater'
     if (
       (direction === 'lower' && currentGuess < userNumber) ||
       (direction === 'greater' && currentGuess > userNumber)
     ) {
       Alert.alert("Don't lie!", 'You know that this is wrong...', [
-        { text: 'Sorry!', style: 'cancel' }
+        { text: 'Sorry!', style: 'cancel' },
       ]);
       return;
     }
@@ -67,9 +75,9 @@ function GameScreen({ userNumber, onGameOver }) {
 
   const guessRoundsListLength = guessRounds.length;
 
-  return (
-    <View style={styles.screen}>
-      <Title>Opponent's Guess</Title>
+  // Portrait layout (default): buttons stacked above the number
+  let content = (
+    <>
       <NumberContainer>{currentGuess}</NumberContainer>
       <Card>
         <InstructionText style={styles.instructionText}>
@@ -78,18 +86,43 @@ function GameScreen({ userNumber, onGameOver }) {
         <View style={styles.buttonsContainer}>
           <View style={styles.buttonContainer}>
             <PrimaryButton onPress={nextGuessHandler.bind(this, 'lower')}>
-              <Ionicons name='remove' size={24} color='white' />
+              <Ionicons name="remove" size={24} color="white" />
             </PrimaryButton>
           </View>
           <View style={styles.buttonContainer}>
             <PrimaryButton onPress={nextGuessHandler.bind(this, 'greater')}>
-              <Ionicons name='add' size={24} color='white' />
+              <Ionicons name="add" size={24} color="white" />
             </PrimaryButton>
           </View>
         </View>
       </Card>
+    </>
+  );
+
+  // Landscape layout: buttons sit on either side of the number (horizontal row)
+  if (width > 500) {
+    content = (
+      <View style={styles.buttonsContainerWide}>
+        <View style={styles.buttonContainer}>
+          <PrimaryButton onPress={nextGuessHandler.bind(this, 'lower')}>
+            <Ionicons name="remove" size={24} color="white" />
+          </PrimaryButton>
+        </View>
+        <NumberContainer>{currentGuess}</NumberContainer>
+        <View style={styles.buttonContainer}>
+          <PrimaryButton onPress={nextGuessHandler.bind(this, 'greater')}>
+            <Ionicons name="add" size={24} color="white" />
+          </PrimaryButton>
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.screen}>
+      <Title>Opponent's Guess</Title>
+      {content}
       <View style={styles.listContainer}>
-        {/* {guessRounds.map(guessRound => <Text key={guessRound}>{guessRound}</Text>)} */}
         <FlatList
           data={guessRounds}
           renderItem={(itemData) => (
@@ -110,19 +143,25 @@ export default GameScreen;
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    padding: 24
+    padding: 24,
+    alignItems: 'center',
   },
   instructionText: {
-    marginBottom: 12
+    marginBottom: 12,
   },
   buttonsContainer: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   buttonContainer: {
-    flex: 1
+    flex: 1,
+  },
+  // Wide layout container used in landscape mode
+  buttonsContainerWide: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   listContainer: {
     flex: 1,
-    padding: 16
-  }
+    padding: 16,
+  },
 });
