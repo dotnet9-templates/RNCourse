@@ -16,12 +16,12 @@ export default function App() {
       {/* <Button title="Click me" onPress={() => alert("Button pressed")} /> */}
 
       {/* <Pressable> — custom styling, looks the same on both platforms */}
-      <Pressable
+      {/* <Pressable
         onPress={() => alert("Button pressed")}
         style={{ backgroundColor: "#007AFF", padding: 10, borderRadius: 6 }}
       >
         <Text style={{ color: "#fff", fontWeight: "bold" }}>Click me</Text>
-      </Pressable>
+      </Pressable> */}
     </View>
   );
 }
