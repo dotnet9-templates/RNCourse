@@ -1,96 +1,90 @@
-import { useState } from "react";
-import { StyleSheet, View, FlatList, Button } from "react-native";
-// expo-status-bar controls the appearance of the status bar at the top of the screen
-// (time, battery, signal icons). "light" makes those icons white — good for dark backgrounds.
-// This comes from the expo-status-bar package (separate from React Native's own StatusBar).
-import { StatusBar } from "expo-status-bar";
+import { useState, useCallback } from "react";
+import { StyleSheet, ImageBackground, SafeAreaView } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 
-// Custom components split out into their own files to keep App.js clean
-import GoalItem from "./components/GoalItem";
-import GoalInput from "./components/GoalInput";
+import StartGameScreen from "./screens/StartGameScreen";
+import GameScreen from "./screens/GameScreen";
+import GameOverScreen from "./screens/GameOverScreen";
+import Colors from "./constants/colors";
 
 export default function App() {
-  // Controls whether the "Add Goal" modal is open or closed
-  const [modalIsVisible, setModalIsVisible] = useState(false);
+  const [userNumber, setUserNumber] = useState();
+  const [gameIsOver, setGameIsOver] = useState(true);
+  const [guessRounds, setGuessRounds] = useState(0);
 
-  // Stores the list of goals as an array of { text, id } objects
-  const [courseGoals, setCourseGoals] = useState([]);
+  const [fontsLoaded] = useFonts({
+    "open-sans": require("./assets/fonts/OpenSans-Regular.ttf"),
+    "open-sans-bold": require("./assets/fonts/OpenSans-Bold.ttf"),
+  });
 
-  // Opens the modal
-  function startAddGoalHandler() {
-    setModalIsVisible(true);
+  // Keep the splash screen visible until fonts are loaded
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null; // Show nothing (splash screen stays visible) until fonts are ready
   }
 
-  // Closes the modal
-  function endAddGoalHandler() {
-    setModalIsVisible(false);
+  function pickedNumberHandler(pickedNumber) {
+    setUserNumber(pickedNumber);
+    setGameIsOver(false);
   }
 
-  // Adds a new goal to the list, then closes the modal
-  function addGoalHandler(enteredGoalText) {
-    setCourseGoals((currentCourseGoals) => [
-      ...currentCourseGoals, // keep all existing goals
-      { text: enteredGoalText, id: Math.random().toString() }, // add the new one
-    ]);
-    endAddGoalHandler();
+  function gameOverHandler(numberOfRounds) {
+    setGameIsOver(true);
+    setGuessRounds(numberOfRounds);
   }
 
-  // Removes a goal from the list by filtering out the one with the matching id
-  function deleteGoalHandler(id) {
-    setCourseGoals((currentCourseGoals) => {
-      return currentCourseGoals.filter((goal) => goal.id !== id);
-    });
+  function startNewGameHandler() {
+    setUserNumber(null);
+    setGuessRounds(0);
+  }
+
+  let screen = <StartGameScreen onPickNumber={pickedNumberHandler} />;
+
+  if (userNumber) {
+    screen = (
+      <GameScreen userNumber={userNumber} onGameOver={gameOverHandler} />
+    );
+  }
+
+  if (gameIsOver && userNumber) {
+    screen = (
+      <GameOverScreen
+        userNumber={userNumber}
+        roundsNumber={guessRounds}
+        onStartNewGame={startNewGameHandler}
+      />
+    );
   }
 
   return (
-    // <> </> is a React Fragment — lets us return multiple elements without a wrapping View
-    <>
-      <StatusBar style="light" />
-      <View style={styles.appContainer}>
-        {/* Button to open the add-goal modal */}
-        <Button
-          title="Add New Goal"
-          color="#a065ec"
-          onPress={startAddGoalHandler}
-        />
-
-        {/* Modal with the text input — only visible when modalIsVisible is true */}
-        <GoalInput
-          visible={modalIsVisible}
-          onAddGoal={addGoalHandler}
-          onCancel={endAddGoalHandler}
-        />
-
-        {/* FlatList efficiently renders long lists — only renders items currently on screen */}
-        <View style={styles.goalsContainer}>
-          <FlatList
-            data={courseGoals}
-            renderItem={(itemData) => {
-              return (
-                <GoalItem
-                  text={itemData.item.text}
-                  id={itemData.item.id}
-                  onDeleteItem={deleteGoalHandler}
-                />
-              );
-            }}
-            // keyExtractor tells FlatList how to uniquely identify each item
-            keyExtractor={(item) => item.id}
-            alwaysBounceVertical={false}
-          />
-        </View>
-      </View>
-    </>
+    <LinearGradient
+      colors={[Colors.primary700, Colors.accent500]}
+      style={styles.rootScreen}
+    >
+      <ImageBackground
+        source={require("./assets/images/background.png")}
+        resizeMode="cover"
+        style={styles.rootScreen}
+        imageStyle={styles.backgroundImage}
+      >
+        <SafeAreaView style={styles.rootScreen} onLayout={onLayoutRootView}>{screen}</SafeAreaView>
+      </ImageBackground>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  appContainer: {
+  rootScreen: {
     flex: 1,
-    paddingTop: 50,
-    paddingHorizontal: 16,
   },
-  goalsContainer: {
-    flex: 5,
+  backgroundImage: {
+    opacity: 0.15,
   },
 });
