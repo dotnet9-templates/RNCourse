@@ -117,6 +117,131 @@ The platform file extensions (`.ios.js`, `.android.js`) work identically on SDK 
 
 ---
 
+## Section 6 — Navigation (Meals App)
+
+**Topics:** React Navigation v6 · Stack navigator · Drawer navigator · Dynamic header options · Passing params between screens · `useLayoutEffect` for header buttons
+
+**New packages:**
+
+```bash
+npm install @react-navigation/native @react-navigation/native-stack @react-navigation/drawer
+npm install react-native-screens react-native-safe-area-context react-native-gesture-handler react-native-reanimated
+```
+
+**App structure:**
+
+```
+screens/      → CategoriesScreen, MealsOverviewScreen, MealDetailScreen, FavoritesScreen
+components/
+  CategoryGridTile.js
+  IconButton.js
+  MealDetails.js
+  MealItem.js
+  MealDetail/  → List.js, Subtitle.js
+data/         → dummy-data.js
+models/       → category.js, meal.js
+```
+
+**Navigation setup in `App.js`:**
+
+- `DrawerNavigator` — side menu with Categories and Favorites tabs
+- `Stack.Navigator` — wraps the drawer, adds `MealsOverview` and `MealDetail` on top of it
+- Header title and button are set dynamically via `useLayoutEffect` inside each screen
+
+**Key concept — `useLayoutEffect` for dynamic headers:**
+
+```js
+useLayoutEffect(() => {
+  navigation.setOptions({ title: categoryTitle });
+}, [catId, navigation]);
+```
+
+Runs before the first paint so the header title is correct immediately — no flash of a wrong title.
+
+---
+
+## Section 7 — App-Wide State Management (Context API & Redux)
+
+**Topics:** Context API · Redux Toolkit · `useSelector` · `useDispatch` · Redux slices · Comparing Context vs Redux
+
+**New packages:**
+
+```bash
+npm install @reduxjs/toolkit react-redux
+```
+
+**What changed from Section 6:**
+
+The Favorites feature was wired up — tapping the star on any meal detail screen saves it to the Favorites drawer tab. The state is managed globally with Redux so any screen can read it.
+
+**New folder — `store/`:**
+
+```
+store/
+  redux/
+    favorites.js    → Redux slice (addFavorite / removeFavorite actions)
+    store.js        → configureStore — registers all reducers
+  context/
+    favorites-context.js  → Context API version (kept as reference, commented out)
+```
+
+**Redux vs Context — what the instructor shows:**
+
+The instructor builds the favorites feature twice — first with the built-in React Context API, then refactors it to Redux. Both versions are kept in this repo so you can read and compare them side by side.
+
+| Approach | File | Used? |
+|---|---|---|
+| Redux (active) | `store/redux/` | Yes — default |
+| Context API (reference) | `store/context/favorites-context.js` | Commented out |
+
+**Why two approaches?**
+
+- **Context API** is built into React — no extra packages. Good for simple shared state like a theme or a logged-in user. Downside: every component that reads the context re-renders when anything in it changes.
+- **Redux** is a dedicated state management library. Better for larger apps where many screens share and update state. Changes are more predictable and easier to debug.
+
+For this app either works fine — the instructor shows both so you understand the trade-off.
+
+**How to switch from Redux → Context (to study the difference):**
+
+1. In `App.js`: comment out `<Provider store={store}>`, uncomment `<FavoritesContextProvider>`
+2. In `FavoritesScreen.js`: comment out `useSelector`, uncomment `useContext(FavoritesContext)`
+3. In `MealDetailScreen.js`: comment out `useSelector`/`useDispatch`, uncomment `useContext(FavoritesContext)`
+
+The commented-out lines are right next to the Redux lines in each file — they're labeled so you can find them easily.
+
+**How Redux works here:**
+
+```js
+// 1. Define actions + reducer in a slice (favorites.js)
+const favoritesSlice = createSlice({
+  name: 'favorites',
+  initialState: { ids: [] },
+  reducers: {
+    addFavorite: (state, action) => { state.ids.push(action.payload.id); },
+    removeFavorite: (state, action) => { state.ids.splice(...); },
+  }
+});
+
+// 2. Register in the store (store.js)
+configureStore({ reducer: { favoriteMeals: favoritesReducer } });
+
+// 3. Wrap the app in Provider (App.js)
+<Provider store={store}> ... </Provider>
+
+// 4. Read state in any component
+const favoriteMealIds = useSelector((state) => state.favoriteMeals.ids);
+
+// 5. Dispatch actions
+const dispatch = useDispatch();
+dispatch(addFavorite({ id: mealId }));
+```
+
+**`MealsList` component (refactor):**
+
+`MealItem.js` was moved into a new `components/MealsList/` folder and a shared `MealsList.js` wrapper was added. Both `MealsOverviewScreen` and `FavoritesScreen` now use the same component.
+
+---
+
 ## Known API Differences
 
 ### expo-image-picker

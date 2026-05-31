@@ -1,6 +1,7 @@
 import { useLayoutEffect } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+// ── SWITCH TO CONTEXT: uncomment these two lines ──
 // import { useContext } from 'react';
 // import { FavoritesContext } from '../store/context/favorites-context';
 
@@ -12,24 +13,36 @@ import { MEALS } from '../data/dummy-data';
 import { addFavorite, removeFavorite } from '../store/redux/favorites';
 
 function MealDetailScreen({ route, navigation }) {
-  // useSelector reads from Redux; useDispatch sends actions to the store
+  // useSelector — reads current favorites from the Redux store (read-only)
+  // useDispatch — gives us a function to send actions that change the store
+  //
+  // ── SWITCH TO CONTEXT: replace the two lines below with ──
+  // const favoriteMealsCtx = useContext(FavoritesContext);
+  // Then use favoriteMealsCtx.ids, favoriteMealsCtx.addFavorite(), etc.
   const favoriteMealIds = useSelector((state) => state.favoriteMeals.ids);
   const dispatch = useDispatch();
 
+  // route.params carries the data passed when navigating here
+  // e.g. navigation.navigate('MealDetail', { mealId: 'm1' })
   const mealId = route.params.mealId;
   const selectedMeal = MEALS.find((meal) => meal.id === mealId);
 
+  // Check if this meal is already in the favorites list
   const mealIsFavorite = favoriteMealIds.includes(mealId);
 
   function changeFavoriteStatusHandler() {
     if (mealIsFavorite) {
+      // Remove: dispatch sends the removeFavorite action to the Redux store
       dispatch(removeFavorite({ id: mealId }));
     } else {
+      // Add: the store's favoriteMeals.ids array gets this id pushed in
       dispatch(addFavorite({ id: mealId }));
     }
   }
 
-  // useLayoutEffect runs before the screen paints — ideal for setting header buttons
+  // useLayoutEffect fires before the screen paints, so the star icon
+  // appears in the header immediately without a visible delay.
+  // The icon switches between 'star' (filled) and 'star-outline' based on mealIsFavorite.
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (

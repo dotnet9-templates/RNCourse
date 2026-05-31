@@ -11,8 +11,15 @@ import MealsOverviewScreen from './screens/MealsOverviewScreen';
 import MealDetailScreen from './screens/MealDetailScreen';
 import FavoritesScreen from './screens/FavoritesScreen';
 import { store } from './store/redux/store';
-// Section 7 also ships a Context API version of favorites state
-// To switch from Redux → Context, uncomment the line below and swap Provider for FavoritesContextProvider
+// ── SECTION 7: Two approaches to app-wide state ──────────────
+// CURRENTLY ACTIVE: Redux (store/redux/)
+// KEPT AS REFERENCE: Context API (store/context/favorites-context.js)
+//
+// To switch to Context API:
+//   1. Uncomment the import below
+//   2. Replace <Provider store={store}> with <FavoritesContextProvider>
+//   3. Replace </Provider> with </FavoritesContextProvider>
+//   4. Update FavoritesScreen.js and MealDetailScreen.js (see comments there)
 // import FavoritesContextProvider from './store/context/favorites-context';
 
 const Stack = createNativeStackNavigator();
@@ -58,7 +65,8 @@ export default function App() {
   return (
     <>
       <StatusBar style="light" />
-      {/* Provider makes the Redux store accessible to all child components */}
+      {/* Provider wraps the entire app so every screen can read from
+          and write to the Redux store — without passing props manually */}
       <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator
