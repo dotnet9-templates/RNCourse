@@ -242,6 +242,45 @@ dispatch(addFavorite({ id: mealId }));
 
 ---
 
+## State Management — What to Use If This App Grows
+
+This course teaches Context API and Redux. If you were building a real production app (say, connected to a .NET backend), here's what to actually reach for:
+
+**TanStack Query + Zustand** — best combo for most real apps.
+
+```
+Data from your API   →  TanStack Query
+Everything else      →  Zustand
+```
+
+### TanStack Query
+
+Handles everything that comes *from the server* — fetching, caching, loading states, error states, and automatic refetching when data goes stale. Replaces the pattern of `useEffect` + `useState` just to load data. This covers ~80% of what most Redux stores end up holding anyway, and it does it better.
+
+### Zustand
+
+Handles *local app state that isn't from the server* — things like whether a drawer is open, the active theme, or whether a user is logged in. Extremely minimal setup (~10 lines vs Redux's slices/actions/reducers boilerplate). No Provider wrapper required. Also smarter about re-renders than Context API.
+
+### Why not just Redux?
+
+Redux predates TanStack Query. Most Redux stores end up being mostly server-fetched data — TanStack Query replaces all of that automatically. What's left is usually small enough that Zustand handles it fine with far less code.
+
+### Why not just Context API?
+
+Fine for tiny apps. But every component subscribed to a context re-renders whenever *anything* in that context changes — as the app grows, this becomes a real performance problem. Zustand is more surgical about re-renders.
+
+### What about MobX?
+
+MobX is a solid option — especially if you come from an object-oriented background (like .NET/C#). It uses the concept of *observables*: you mark pieces of state as observable, and any component that reads them automatically re-renders when they change. No actions to dispatch, no selectors to write.
+
+**Pros:** Very little boilerplate, feels natural if you're used to OOP, fine-grained re-renders.
+
+**Cons:** "Magic" — it's less obvious what's causing a re-render when something goes wrong. Harder to debug than Redux or Zustand. Smaller community than Redux.
+
+**Bottom line:** MobX is a reasonable choice but Zustand achieves a similar low-boilerplate experience with less magic and easier debugging. For a .NET-connected app, the `TanStack Query + Zustand` combo still wins.
+
+---
+
 ## Known API Differences
 
 ### expo-image-picker
