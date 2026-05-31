@@ -3,8 +3,8 @@ import { StyleSheet, Text, View, Button, Pressable } from "react-native";
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Another Text</Text>
-      <Text>Hello World!!!!</Text>
+      <Text style={styles.dummyText}>Another Text</Text>
+      <Text style={styles.dummyText}>Hello World!!!!</Text>
       {/*
         NOTE: <Button> renders using the native style of each platform.
         iOS: blue text link (no background) — standard iOS style
@@ -13,7 +13,7 @@ export default function App() {
         To get identical styling on both, use <TouchableOpacity> or <Pressable> with custom styles instead.
       */}
       {/* <Button> — platform-native styling (looks different on iOS vs Android) */}
-      {/* <Button title="Click me" onPress={() => alert("Button pressed")} /> */}
+      <Button title="Click me" onPress={() => alert("Button pressed")} />
 
       {/* <Pressable> — custom styling, looks the same on both platforms */}
       {/* <Pressable
@@ -32,5 +32,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  dummyText: {
+    margine: 16,
+    borderWidth: 2,
+    borderColor: "red",
+    padding: 16,
   },
 });
