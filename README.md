@@ -1,6 +1,7 @@
 # Maximilian React Native Course
 
 https://github.com/academind/react-native-practical-guide-code
+https://github.com/academind/react-native-practical-guide-code/tree/02-basics/code
 
 Follow-along project for Udemy's [React Native - The Practical Guide](https://www.udemy.com/course/react-native-the-practical-guide/) by Maximilian Schwarzmüller.
 
@@ -67,18 +68,18 @@ Once the app is running in the simulator, press **Cmd + D** to open the Expo dev
 
 ### Simulators used in this project
 
-| Platform | Device |
-|---|---|
-| iOS Simulator | iPhone 16 Pro (iOS 18.6) |
+| Platform         | Device                            |
+| ---------------- | --------------------------------- |
+| iOS Simulator    | iPhone 16 Pro (iOS 18.6)          |
 | Android Emulator | Pixel 9 Pro (API 37 / Android 17) |
 
 ### Developer menu shortcuts
 
-| Platform | Open developer menu |
-|---|---|
-| iOS Simulator | **Cmd + D** |
+| Platform         | Open developer menu                               |
+| ---------------- | ------------------------------------------------- |
+| iOS Simulator    | **Cmd + D**                                       |
 | Android Emulator | **Cmd + M** (Mac) or **Ctrl + M** (Windows/Linux) |
-| Physical device | Shake the phone |
+| Physical device  | Shake the phone                                   |
 
 ### iOS vs. Android — will it work the same?
 
