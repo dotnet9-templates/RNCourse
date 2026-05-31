@@ -1,11 +1,81 @@
 # Maximilian React Native Course
 
+https://github.com/academind/react-native-practical-guide-code
+
 Follow-along project for Udemy's [React Native - The Practical Guide](https://www.udemy.com/course/react-native-the-practical-guide/) by Maximilian Schwarzmüller.
 
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) installed
 - [Expo Go 2.31.2](https://github.com/expo/expo/releases) on your device
+
+## Previewing the App (Mac)
+
+You have several options to preview the app on Mac:
+
+### Option 1: iOS Simulator (recommended)
+
+- Install **Xcode** from the Mac App Store (free, ~15GB)
+- Run `npx expo start` then press `i` in the terminal
+- Opens an iPhone simulator directly on your Mac — no physical device needed
+
+### Option 2: Android Emulator
+
+- Install **Android Studio** from [developer.android.com/studio](https://developer.android.com/studio)
+- Create a virtual device inside Android Studio (AVD Manager)
+- Run `npx expo start` then press `a` in the terminal
+
+### Option 3: Physical iPhone with Expo Go
+
+- Download **Expo Go** from the App Store on your iPhone
+- Run `npx expo start` and scan the QR code
+- Make sure you have version **2.31.2** to match SDK 51 — the latest App Store version may not work
+
+### Option 4: Physical Android with Expo Go
+
+- Download **Expo Go** from the Google Play Store
+- Run `npx expo start` and scan the QR code
+- Make sure you have version **2.31.2** to match SDK 51
+
+### Option 5: Web browser
+
+- Run `npx expo start` then press `w`
+- Opens the app in your browser — useful for quick checks but not a perfect representation of mobile UI
+
+> The **iOS Simulator** via Xcode is the easiest option on Mac — no phone needed and it closely matches a real iPhone.
+
+### Starting the simulator correctly
+
+Once Xcode is installed:
+
+1. `cd` into the `RNCourse` app folder (not the repo root)
+2. Run `npx expo start`
+3. Press `s` to switch to **Expo Go** mode
+4. Press `i` to launch the iOS Simulator
+
+Expo handles everything automatically — you do not need to open Xcode or the Simulator app manually. The first boot takes ~30 seconds; after that it's much faster.
+
+Once the app is running in the simulator, press **Cmd + D** to open the Expo developer menu (reload, toggle inspector, etc.).
+
+### iOS vs. Android — will it work the same?
+
+Mostly yes. React Native is cross-platform so the vast majority of your code works on both. The instructor tests on Android, but following along on the iOS Simulator is fine. Minor differences you may notice:
+
+| Area            | Difference                                             |
+| --------------- | ------------------------------------------------------ |
+| Shadows         | iOS uses `shadow*` props; Android uses `elevation`     |
+| Overflow        | `overflow: hidden` behaves slightly differently        |
+| Fonts           | Built-in font names differ per platform                |
+| Back navigation | iOS has swipe-back gesture; Android uses a back button |
+| Permissions     | Camera, location, notifications may prompt differently |
+
+For this course, you won't hit many of these edge cases. When you do, React Native's built-in `Platform` API handles it:
+
+```js
+import { Platform } from "react-native";
+
+const padding = Platform.OS === "ios" ? 20 : 10;
+```
 
 ## Getting Started (Lesson 1 — May 2026)
 
